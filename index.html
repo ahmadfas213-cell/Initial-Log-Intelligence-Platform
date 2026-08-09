@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Log Intelligence Platform</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="background-grid"></div>
+
+<main class="container">
+
+    <header class="hero">
+
+        <div>
+            <p class="eyebrow">LOG INTELLIGENCE PLATFORM</p>
+
+            <h1>
+                Read the noise.<br>
+                Find the signal.
+            </h1>
+
+            <p class="subtitle">
+                Upload application or server logs and turn raw events
+                into actionable engineering intelligence.
+            </p>
+        </div>
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            LOCAL ANALYSIS
+        </div>
+
+    </header>
+
+
+    <section class="upload-panel">
+
+        <div class="section-label">
+            <span>01</span>
+            LOG INGESTION
+        </div>
+
+        <label
+            for="fileInput"
+            class="drop-zone"
+            id="dropZone"
+        >
+
+            <div class="upload-icon">
+                ↑
+            </div>
+
+            <h2>
+                Drop your log file here
+            </h2>
+
+            <p>
+                or click to browse
+            </p>
+
+            <small>
+                .log, .txt · processed locally in your browser
+            </small>
+
+            <input
+                type="file"
+                id="fileInput"
+                accept=".log,.txt,text/plain"
+                hidden
+            >
+
+        </label>
+
+        <div class="sample-row">
+
+            <button
+                id="sampleButton"
+                type="button"
+                class="secondary-button"
+            >
+                LOAD SAMPLE LOG
+            </button>
+
+            <span>
+                Test the analyzer without uploading a file.
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <div
+        id="loading"
+        class="loading hidden"
+    >
+
+        <div class="spinner"></div>
+
+        <span>
+            Parsing log events...
+        </span>
+
+    </div>
+
+
+    <div
+        id="error"
+        class="error hidden"
+    ></div>
+
+
+    <section
+        id="dashboard"
+        class="hidden"
+    >
+
+        <div class="file-header panel">
+
+            <div>
+
+                <p class="eyebrow">
+                    ACTIVE DATASET
+                </p>
+
+                <h2 id="fileName">
+                    --
+                </h2>
+
+                <p id="fileMeta">
+                    --
+                </p>
+
+            </div>
+
+            <button
+                id="exportButton"
+                class="export-button"
+                type="button"
+            >
+                EXPORT CSV
+            </button>
+
+        </div>
+
+
+        <section class="metrics">
+
+            <div class="metric panel">
+
+                <span>TOTAL EVENTS</span>
+
+                <strong id="totalEvents">
+                    0
+                </strong>
+
+                <small>
+                    parsed log entries
+                </small>
+
+            </div>
+
+
+            <div class="metric panel">
+
+                <span>ERRORS</span>
+
+                <strong
+                    id="errorCount"
+                    class="danger"
+                >
+                    0
+                </strong>
+
+                <small>
+                    error events
+                </small>
+
+            </div>
+
+
+            <div class="metric panel">
+
+                <span>WARNINGS</span>
+
+                <strong
+                    id="warningCount"
+                    class="warning"
+                >
+                    0
+                </strong>
+
+                <small>
+                    warning events
+                </small>
+
+            </div>
+
+
+            <div class="metric panel">
+
+                <span>CRITICAL</span>
+
+                <strong
+                    id="criticalCount"
+                    class="critical"
+                >
+                    0
+                </strong>
+
+                <small>
+                    critical events
+                </small>
+
+            </div>
+
+
+            <div class="metric panel">
+
+                <span>UNIQUE IPS</span>
+
+                <strong id="uniqueIPs">
+                    0
+                </strong>
+
+                <small>
+                    detected addresses
+                </small>
+
+            </div>
+
+
+            <div class="metric panel">
+
+                <span>ANOMALY SCORE</span>
+
+                <strong id="anomalyScore">
+                    0
+                </strong>
+
+                <small>
+                    0–100 risk signal
+                </small>
+
+            </div>
+
+        </section>
+
+
+        <div class="dashboard-grid">
+
+
+            <section class="panel">
+
+                <div class="panel-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            EVENT DISTRIBUTION
+                        </p>
+
+                        <h3>
+                            Severity Overview
+                        </h3>
+
+                    </div>
+
+                    <span class="panel-number">
+                        02
+                    </span>
+
+                </div>
+
+                <div class="severity-chart">
+
+                    <div class="bar-row">
+
+                        <div class="bar-label">
+                            <span>INFO</span>
+                            <strong id="infoPercent">
+                                0%
+                            </strong>
+                        </div>
+
+                        <div class="bar">
+                            <div
+                                id="infoBar"
+                                class="info-bar"
+                            ></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="bar-row">
+
+                        <div class="bar-label">
+                            <span>WARNING</span>
+                            <strong id="warningPercent">
+                                0%
+                            </strong>
+                        </div>
+
+                        <div class="bar">
+                            <div
+                                id="warningBar"
+                                class="warning-bar"
+                            ></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="bar-row">
+
+                        <div class="bar-label">
+                            <span>ERROR</span>
+                            <strong id="errorPercent">
+                                0%
+                            </strong>
+                        </div>
+
+                        <div class="bar">
+                            <div
+                                id="errorBar"
+                                class="error-bar"
+                            ></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="bar-row">
+
+                        <div class="bar-label">
+                            <span>CRITICAL</span>
+                            <strong id="criticalPercent">
+                                0%
+                            </strong>
+                        </div>
+
+                        <div class="bar">
+                            <div
+                                id="criticalBar"
+                                class="critical-bar"
+                            ></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section class="panel">
+
+                <div class="panel-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            SECURITY SIGNAL
+                        </p>
+
+                        <h3>
+                            Intelligence Assessment
+                        </h3>
+
+                    </div>
+
+                    <span class="panel-number">
+                        03
+                    </span>
+
+                </div>
+
+                <div class="assessment">
+
+                    <div class="assessment-score">
+
+                        <strong id="assessmentScore">
+                            0
+                        </strong>
+
+                        <span>
+                            / 100
+                        </span>
+
+                    </div>
+
+                    <h4 id="assessmentLabel">
+                        Waiting for data
+                    </h4>
+
+                    <p id="assessmentText">
+                        Upload a log file to generate
+                        an intelligence assessment.
+                    </p>
+
+                </div>
+
+                <div class="risk-list">
+
+                    <div>
+                        <span>Critical ratio</span>
+                        <strong id="criticalRatio">
+                            0%
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Error ratio</span>
+                        <strong id="errorRatio">
+                            0%
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>IP concentration</span>
+                        <strong id="ipConcentration">
+                            --
+                        </strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <div class="dashboard-grid">
+
+
+            <section class="panel">
+
+                <div class="panel-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            NETWORK INTELLIGENCE
+                        </p>
+
+                        <h3>
+                            Top IP Addresses
+                        </h3>
+
+                    </div>
+
+                    <span class="panel-number">
+                        04
+                    </span>
+
+                </div>
+
+                <div
+                    id="ipList"
+                    class="rank-list"
+                ></div>
+
+            </section>
+
+
+            <section class="panel">
+
+                <div class="panel-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            FAILURE ANALYSIS
+                        </p>
+
+                        <h3>
+                            Top Error Patterns
+                        </h3>
+
+                    </div>
+
+                    <span class="panel-number">
+                        05
+                    </span>
+
+                </div>
+
+                <div
+                    id="errorList"
+                    class="rank-list"
+                ></div>
+
+            </section>
+
+        </div>
+
+
+        <section class="panel timeline-panel">
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <p class="eyebrow">
+                        TEMPORAL ANALYSIS
+                    </p>
+
+                    <h3>
+                        Event Timeline
+                    </h3>
+
+                </div>
+
+                <span class="panel-number">
+                    06
+                </span>
+
+            </div>
+
+            <div
+                id="timeline"
+                class="timeline"
+            ></div>
+
+        </section>
+
+
+        <section class="panel event-panel">
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <p class="eyebrow">
+                        RAW EVENT STREAM
+                    </p>
+
+                    <h3>
+                        Log Explorer
+                    </h3>
+
+                </div>
+
+                <span class="panel-number">
+                    07
+                </span>
+
+            </div>
+
+
+            <div class="filters">
+
+                <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="Search log message, IP, user..."
+                >
+
+                <select id="severityFilter">
+
+                    <option value="ALL">
+                        All severity
+                    </option>
+
+                    <option value="INFO">
+                        INFO
+                    </option>
+
+                    <option value="WARNING">
+                        WARNING
+                    </option>
+
+                    <option value="ERROR">
+                        ERROR
+                    </option>
+
+                    <option value="CRITICAL">
+                        CRITICAL
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>TIME</th>
+                            <th>SEVERITY</th>
+                            <th>IP</th>
+                            <th>MESSAGE</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody
+                        id="logTable"
+                    ></tbody>
+
+                </table>
+
+            </div>
+
+            <div
+                id="eventCount"
+                class="event-count"
+            >
+                Showing 0 events
+            </div>
+
+        </section>
+
+    </section>
+
+
+    <footer>
+
+        <span>
+            LOG INTELLIGENCE PLATFORM
+        </span>
+
+        <span>
+            CLIENT-SIDE ANALYSIS · NO DATA UPLOAD
+        </span>
+
+    </footer>
+
+</main>
+
+<script src="script.js"></script>
+
+</body>
+</html>
